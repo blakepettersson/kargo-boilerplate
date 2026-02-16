@@ -4,9 +4,11 @@
 
 project:
   create: true
+projectConfig:
+  create: true
   promotionPolicies: []
 warehouse:
   create: true
-  requestedFreight: []
+  subscriptions: []
 stages: []
 analysisTemplates: []

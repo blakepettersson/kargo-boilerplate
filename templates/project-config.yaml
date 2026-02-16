@@ -1,0 +1,11 @@
+{{- if .Values.projectConfig.create }}
+apiVersion: kargo.akuity.io/v1alpha1
+kind: ProjectConfig
+metadata:
+  name: {{ include "kargo-boilerplate.name" . }}
+  namespace: {{ include "kargo-boilerplate.name" . }}
+spec:
+  {{- with .Values.projectConfig.promotionPolicies }}
+  promotionPolicies: {{ toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

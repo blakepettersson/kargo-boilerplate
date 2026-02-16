@@ -23,6 +23,10 @@ spec:
         helm:
           valuesObject:
             nameOverride: '{{.appName}}'
+            project:
+              create: false
+            projectConfig:
+              create: false
             warehouse:
               subscriptions:
                 - chart:

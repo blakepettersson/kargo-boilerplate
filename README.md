@@ -1,9 +1,9 @@
 # kargo-boilerplate
 
-This repo is a "(very) poor-man's `StageSet`". The idea is that instead of having to figure out how and where all the 
-CRs fit together, this can generate `Stage`s, `Warehouse` and `Project`s for you.
+This repo is a "(very) poor-man's `StageSet`". The idea is that instead of having to figure out how and where all the
+CRs fit together, this can generate `Stage`s, `Warehouse`s, `Project`s and `ProjectConfig`s for you.
 
-The gist of it is that the configuration for a Kargo project is configured through the `config` directory. To add a 
+The gist of it is that the configuration for a Kargo project is configured through the `config` directory. To add a
 freightline / project for an application, add a YAML file to the `config/apps` dir.
 
 There are a few assumptions/conventions that need to be true for this to work:
@@ -20,10 +20,14 @@ chart: helm-guestbook # The chart
 image: ghcr.io/dhpup/guestbook # The Docker image to use as freight
 ```
 
-Once the app is added, Argo CD will do its thing and generate a Kargo project with a Warehouse, the stages for the Kargo 
+Once the app is added, Argo CD will do its thing and generate a Kargo project with a Warehouse, the stages for the Kargo
 project as well as the Argo CD Applications which Kargo uses for promotion.
 
-To add a stage, add a YAML file to the `config/stages` dir. If `upstreamStages` is empty, the presumption is that it 
+Stages use `promotionTemplate` with composable steps (specifically the `argocd-update` step) to promote freight through
+the pipeline. Promotion policies (e.g. auto-promotion) are configured via a `ProjectConfig` resource, separate from the
+`Project` itself.
+
+To add a stage, add a YAML file to the `config/stages` dir. If `upstreamStages` is empty, the presumption is that it
 uses a Warehouse directly.
 
 ```yaml
@@ -39,7 +43,7 @@ A variant with an upstream stage:
 stageName: staging
 color: green
 # This has `dev` as an upstream stage
-upstreamStages: 
+upstreamStages:
   - dev
 ```
 

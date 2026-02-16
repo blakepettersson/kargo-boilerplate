@@ -7,7 +7,7 @@ metadata:
   annotations: {{ toYaml .annotations | nindent 4 }}
 spec:
   requestedFreight: {{ toYaml .requestedFreight | nindent 4 }}
-  promotionMechanisms: {{ toYaml .promotionMechanisms | nindent 4 }}
+  promotionTemplate: {{ toYaml .promotionTemplate | nindent 4 }}
   {{- with .verification }}
   verification:
     {{- toYaml . | nindent 4 }}

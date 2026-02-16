@@ -46,11 +46,13 @@ spec:
           valuesObject:
             project:
               create: false
+            projectConfig:
+              create: false
             warehouse:
               create: false
             nameOverride: '{{.appName}}'
             stages:
-              - name: '{{.appName}}'
+              - name: '{{.stageName}}'
                 annotations:
                   kargo.akuity.io/color: '{{.color}}'
                 requestedFreight:
@@ -62,15 +64,19 @@ spec:
                       {{- if not (empty .upstreamStages) }}
                       stages: {{.upstreamStages}}
                       {{- end }}
-                promotionMechanisms:
-                  argoCDAppUpdates:
-                    - appName: '{{.appName}}-{{.stageName}}'
-                      sourceUpdates:
-                        - repoURL: '{{.registry}}'
-                          chart: '{{.chart}}'
-                          helm:
-                            images:
-                              - image: '{{.image}}'
-                                key: image.tag
-                                value: Tag # Update Application to reference the new image version
-                          updateTargetRevision: true # Update Application to reference the new chart version   
+                promotionTemplate:
+                  spec:
+                    steps:
+                      - uses: argocd-update
+                        config:
+                          apps:
+                            - name: '{{.appName}}-{{.stageName}}'
+                              sources:
+                                - repoURL: '{{.registry}}'
+                                  chart: '{{.chart}}'
+                                  updateTargetRevision: true
+                                  helm:
+                                    images:
+                                      - image: '{{.image}}'
+                                        key: image.tag
+                                        value: Tag
