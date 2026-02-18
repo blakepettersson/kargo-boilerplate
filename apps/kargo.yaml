@@ -45,6 +45,12 @@ spec:
         helm:
           valuesObject:
             nameOverride: '{{.appName}}'
+            warehouse:
+              subscriptions:
+                - chart:
+                    repoURL: '{{.registry}}/{{.chart}}'
+                - image:
+                    repoURL: '{{.image}}'
             stages:
               - name: '{{.stageName}}'
                 annotations:
