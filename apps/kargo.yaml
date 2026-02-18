@@ -1,26 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: kargo-stages
+  name: kargo
   namespace: argocd
 spec:
   goTemplate: true
   generators:
-    - matrix:
-        generators:
-          - git:
-              repoURL: https://github.com/blakepettersson/kargo-boilerplate.git
-              revision: main
-              files:
-                - path: "config/apps/*.yaml"
-          - git:
-              repoURL: https://github.com/blakepettersson/kargo-boilerplate.git
-              revision: main
-              files:
-                - path: "config/stages/*.yaml"
+    - git:
+        repoURL: https://github.com/blakepettersson/kargo-boilerplate.git
+        revision: main
+        files:
+          - path: "config/apps/*.yaml"
   template:
     metadata:
-      name: 'kargo-{{.appName}}-stage-{{.stageName}}'
+      name: 'kargo-{{.appName}}'
     spec:
       project: kargo-project
       source:
@@ -52,25 +45,48 @@ spec:
                 - image:
                     repoURL: '{{.image}}'
             stages:
-              - name: '{{.stageName}}'
+              - name: dev
                 annotations:
-                  kargo.akuity.io/color: '{{.color}}'
+                  kargo.akuity.io/color: green
                 requestedFreight:
                   - origin:
                       kind: Warehouse
                       name: '{{.appName}}'
                     sources:
-                      direct: {{empty .upstreamStages}}
-                      {{- if not (empty .upstreamStages) }}
-                      stages: {{.upstreamStages}}
-                      {{- end }}
+                      direct: true
                 promotionTemplate:
                   spec:
                     steps:
                       - uses: argocd-update
                         config:
                           apps:
-                            - name: '{{.appName}}-{{.stageName}}'
+                            - name: '{{.appName}}-dev'
+                              sources:
+                                - repoURL: '{{.registry}}'
+                                  chart: '{{.chart}}'
+                                  updateTargetRevision: true
+                                  helm:
+                                    images:
+                                      - image: '{{.image}}'
+                                        key: image.tag
+                                        value: Tag
+              - name: staging
+                annotations:
+                  kargo.akuity.io/color: yellow
+                requestedFreight:
+                  - origin:
+                      kind: Warehouse
+                      name: '{{.appName}}'
+                    sources:
+                      stages:
+                        - dev
+                promotionTemplate:
+                  spec:
+                    steps:
+                      - uses: argocd-update
+                        config:
+                          apps:
+                            - name: '{{.appName}}-staging'
                               sources:
                                 - repoURL: '{{.registry}}'
                                   chart: '{{.chart}}'
