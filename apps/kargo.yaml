@@ -44,12 +44,6 @@ spec:
       source:
         helm:
           valuesObject:
-            project:
-              create: false
-            projectConfig:
-              create: false
-            warehouse:
-              create: false
             nameOverride: '{{.appName}}'
             stages:
               - name: '{{.stageName}}'

@@ -1,4 +1,3 @@
-{{- if .Values.projectConfig.create }}
 apiVersion: kargo.akuity.io/v1alpha1
 kind: ProjectConfig
 metadata:
@@ -8,4 +7,3 @@ spec:
   {{- with .Values.projectConfig.promotionPolicies }}
   promotionPolicies: {{ toYaml . | nindent 4 }}
   {{- end }}
-{{- end }}

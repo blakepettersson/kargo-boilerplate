@@ -1,6 +1,4 @@
-{{- if .Values.project.create }}
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Project
 metadata:
   name: {{ include "kargo-boilerplate.name" . }}
-{{- end }}
